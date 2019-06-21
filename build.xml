@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="demo" default="1_build">
+	<target name="init">
+		<property name="project.name" value="blog" />
+		<property name="jar.name" value="fusiyu-javaweb-blog" />
+		<property name="src.dir" value="./src" />
+		<property name="web.dir" value="./web" />
+		<property name="build.dir" value="./bin" />
+		<property name="dist.dir" value="./dist" />
+		<property name="lib.dir" value="${web.dir}/WEB-INF/lib" />
+	</target>
+	
+	<path id="classpath">
+		<fileset dir="${build.dir}"><include name="*.class" /></fileset>
+		<fileset dir="${lib.dir}"><include name="**/*.jar" /></fileset>
+	</path>
+	
+	<target name="cleanup" depends="init">
+		<delete dir="${build.dir}" />
+		<mkdir dir="${build.dir}" />
+	</target>
+	
+	<target name="compile">
+		<javac	srcdir="${src.dir}" 
+				destdir="${build.dir}" 
+				target="1.8" debug="true" encoding="UTF-8" includeantruntime="false">
+			<classpath  refid="classpath" />
+			<include name="**/*.java" />
+		</javac>
+	</target>
+	
+	<target name="pack_jar" >			
+		<jar destfile="${lib.dir}/${jar.name}.jar">
+			<zipfileset dir="${build.dir}/cn" prefix="cn" includes="**/*.*"/>	
+		</jar>	
+	</target>
+	
+	<target name="pack_war" >		
+		<jar destfile="${dist.dir}/${project.name}.war">
+			<zipfileset dir="${web.dir}" includes="**/*.*" excludes="WEB-INF/lib/servlet-api.jar"/>
+		</jar>
+	</target>
+
+	<target name="1_build" depends="init">	
+		<antcall target="cleanup" />		
+		<antcall target="compile" />
+		<antcall target="pack_jar" />
+		<antcall target="pack_war" />
+	</target>
+		
+</project>
